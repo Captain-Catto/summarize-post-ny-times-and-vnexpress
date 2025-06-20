@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const maxContentLength = 8000;
+    const maxContentLength = 16000;
     const truncatedContent =
       content.length > maxContentLength
         ? content.substring(0, maxContentLength) + "..."

@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     const source = detectSource(content);
 
-    const maxContentLength = 8000;
+    const maxContentLength = 16000;
     const truncatedContent =
       content.length > maxContentLength
         ? content.substring(0, maxContentLength) + "..."
@@ -59,11 +59,12 @@ export async function POST(request: NextRequest) {
     let prompt = "";
     if (source === "vnexpress") {
       prompt = `Hãy tóm tắt bài viết VNExpress sau đây bằng tiếng Việt. Tóm tắt cần:
-- Ngắn gọn nhưng đầy đủ thông tin chính
-- Giữ lại các con số, thống kê quan trọng
-- Bao gồm các điểm chính và kết luận
-- Độ dài khoảng 150-300 từ
-- Sử dụng ngôn ngữ rõ ràng, dễ hiểu
+- Chi tiết và đầy đủ thông tin quan trọng
+- Giữ lại tất cả con số, thống kê, tên riêng
+- Bao gồm nguyên nhân, diễn biến và hệ quả
+- Độ dài từ 150-300 từ
+- Chia thành các đoạn rõ ràng
+- Sử dụng ngôn ngữ chính xác, dễ hiểu
 
 Nội dung bài viết:
 ${truncatedContent}
@@ -76,6 +77,7 @@ Tóm tắt:`;
 - Include key points and conclusions
 - Be approximately 150-300 words
 - Use clear and understandable language
+- Maintain the journalistic style of the New York Times
 
 Article content:
 ${truncatedContent}
@@ -88,6 +90,7 @@ Summary (in Vietnamese):`;
 - Bao gồm các điểm chính và kết luận
 - Độ dài khoảng 150-300 từ
 - Sử dụng ngôn ngữ rõ ràng, dễ hiểu
+- Giữ lại phong cách báo chí chuyên nghiệp
 
 Nội dung bài viết:
 ${truncatedContent}
@@ -98,7 +101,7 @@ Tóm tắt:`;
     const { text } = await generateText({
       model: groq("llama-3.1-70b-versatile"),
       prompt: prompt,
-      maxTokens: 1000,
+      maxTokens: 2000,
       temperature: 0.3,
     });
 

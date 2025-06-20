@@ -346,7 +346,7 @@ export async function POST(request: NextRequest) {
     );
 
     // Limit to reasonable number
-    const limitedLinks = uniqueLinks.slice(0, 50);
+    const limitedLinks = uniqueLinks.slice(0, 100);
 
     console.log(`Returning ${limitedLinks.length} unique links`);
 
