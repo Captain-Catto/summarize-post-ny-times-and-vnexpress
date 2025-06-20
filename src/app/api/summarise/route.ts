@@ -99,7 +99,7 @@ Tóm tắt:`;
     }
 
     const { text } = await generateText({
-      model: groq("llama-3.1-70b-versatile"),
+      model: groq("llama-3.3-70b-versatile"),
       prompt: prompt,
       maxTokens: 2000,
       temperature: 0.3,
