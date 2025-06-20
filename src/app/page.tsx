@@ -169,6 +169,7 @@ export default function Home() {
 
     setLoading(true);
     setError("");
+    console.log("Starting to crawl links from:", url);
 
     try {
       const response = await fetch("/api/crawl-links", {
@@ -177,15 +178,20 @@ export default function Home() {
         body: JSON.stringify({ url }),
       });
 
+      console.log("Response status:", response.status);
+
       if (!response.ok) {
         const errorData = await response.json();
+        console.error("Error response:", errorData);
         throw new Error(errorData.error || "Không thể lấy danh sách bài viết");
       }
 
       const data = await response.json();
+      console.log("Successfully got links:", data.totalFound);
       setLinkResult(data);
       setActiveStep("links");
     } catch (err) {
+      console.error("Error in handleCrawlLinks:", err);
       setError(err instanceof Error ? err.message : "Đã xảy ra lỗi");
     } finally {
       setLoading(false);
@@ -195,6 +201,7 @@ export default function Home() {
   const handleSelectArticle = async (articleUrl: string) => {
     setLoading(true);
     setError("");
+    console.log("Starting to crawl article from:", articleUrl);
 
     try {
       let response = await fetch("/api/crawl", {
@@ -203,8 +210,11 @@ export default function Home() {
         body: JSON.stringify({ url: articleUrl }),
       });
 
+      console.log("Article response status:", response.status);
+
       // If NYTimes and failed, try dynamic crawling
       if (!response.ok && articleUrl.includes("nytimes.com")) {
+        console.log("Trying dynamic crawling for NYTimes...");
         response = await fetch("/api/crawl-dynamic", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -214,13 +224,16 @@ export default function Home() {
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.error("Error response:", errorData);
         throw new Error(errorData.error || "Không thể lấy bài viết");
       }
 
       const data = await response.json();
+      console.log("Successfully got article:", data.title);
       setSelectedArticle(data);
       setActiveStep("article");
     } catch (err) {
+      console.error("Error in handleSelectArticle:", err);
       setError(err instanceof Error ? err.message : "Đã xảy ra lỗi");
     } finally {
       setLoading(false);
@@ -460,7 +473,7 @@ export default function Home() {
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   URL Trang Chủ hoặc Chuyên Mục
                 </label>
                 <input
@@ -468,9 +481,9 @@ export default function Home() {
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="Nhập URL trang chủ VNExpress (VN/EN) hoặc New York Times... hoặc chọn từ dropdown phía trên"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
                 />
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-black mt-1">
                   💡 Mẹo: Bấm vào các tag phía trên để chọn URL có sẵn
                 </p>
               </div>

@@ -96,7 +96,7 @@ Tóm tắt:`;
     }
 
     const { text } = await generateText({
-      model: groq("llama-3.1-8b-instant"),
+      model: groq("llama-3.1-70b-versatile"),
       prompt: prompt,
       maxTokens: 1000,
       temperature: 0.3,

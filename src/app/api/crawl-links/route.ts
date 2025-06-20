@@ -319,12 +319,14 @@ export async function POST(request: NextRequest) {
 
     let links: ArticleLink[] = [];
 
+    // Fix the logic here - was incorrectly assigning NYTimes function to VNExpress
     if (url.includes("vnexpress.net")) {
       if (url.includes("e.vnexpress.net")) {
         links = extractVNExpressEnglishLinks($, url);
       } else {
         links = extractVNExpressLinks($);
       }
+    } else if (url.includes("nytimes.com")) {
       links = extractNYTimesLinks($);
     } else {
       return NextResponse.json(
@@ -348,7 +350,8 @@ export async function POST(request: NextRequest) {
 
     console.log(`Returning ${limitedLinks.length} unique links`);
 
-    return NextResponse.json({
+    // Add CORS headers
+    const responseData = {
       source: url.includes("e.vnexpress.net")
         ? "vnexpress-en"
         : url.includes("vnexpress.net")
@@ -357,6 +360,16 @@ export async function POST(request: NextRequest) {
       baseUrl: url,
       links: limitedLinks,
       totalFound: limitedLinks.length,
+    };
+
+    return new NextResponse(JSON.stringify(responseData), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
     });
   } catch (error: unknown) {
     console.error("Error crawling links:", error);

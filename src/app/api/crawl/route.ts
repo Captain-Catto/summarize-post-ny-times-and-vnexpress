@@ -376,6 +376,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log("Crawling article from:", url);
+
     const response = await fetch(url, {
       headers: {
         "User-Agent":
@@ -390,6 +392,9 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
+      console.error(
+        `Failed to fetch article: ${response.status} ${response.statusText}`
+      );
       return NextResponse.json(
         {
           error: `Failed to fetch article: ${response.status} ${response.statusText}`,
@@ -427,6 +432,7 @@ export async function POST(request: NextRequest) {
 
     // Validate that we got some content
     if (!articleData.title && !articleData.content) {
+      console.error("Could not extract article content");
       return NextResponse.json(
         {
           error:
@@ -436,10 +442,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log("Successfully extracted article:", articleData.title);
     articleData.rawHtml = html;
 
-    return NextResponse.json(articleData);
+    return new NextResponse(JSON.stringify(articleData), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    });
   } catch (error: unknown) {
+    console.error("Error crawling article:", error);
     return NextResponse.json(
       {
         error: "Failed to crawl article",
